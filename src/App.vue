@@ -1,14 +1,23 @@
-<script setup></script>
+<script>
+  export default {
+    components: { AppHeader },
+  };
+</script>
+
+<script setup>
+  import AppHeader from "@/components/AppHeader.vue";
+</script>
 
 <template>
   <header>
-    <img
+    <!-- <img
       alt="Vue logo"
       class="logo"
       src="./assets/logo.svg"
       width="125"
       height="125"
-    />
+    /> -->
+    <AppHeader alt="Vue logo" image="logo.svg" title="Planetary Table" />
   </header>
   <main>
     <div class="content-container"></div>
