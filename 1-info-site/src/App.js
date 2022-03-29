@@ -1,20 +1,15 @@
-import logo from "./logo.svg";
+import React from "react";
+import Header from "./components/Header";
+import MainContent from "./components/MainContent";
+import Footer from "./components/Footer";
 import "./App.css";
 
 function App() {
   return (
-    <div>
-      <div>
-        <img src={logo} width="100px" alt="logo" />
-      </div>
-      <h1>Fun facts about React</h1>
-      <ul>
-        <li>Was first released in 2013</li>
-        <li>Was originally created by Jordan Walke</li>
-        <li>Has over 100K stars on Github</li>
-        <li>Is maintained by facebook</li>
-        <li>Powers thousands of enterprise apps including mobile apps</li>
-      </ul>
+    <div className="page-container">
+      <Header />
+      <MainContent />
+      {/* <Footer /> */}
     </div>
   );
 }
