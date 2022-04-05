@@ -100,3 +100,14 @@ root.render(main);
 All `aria` props are fully supported in React and written as normal (not camelCase) including `aria-label` syntax is the same in JSX.
 
 ### Using expressions JSX
+
+The below example uses conditional classes and components via the use of the ternary:
+
+```js
+const isError = false;
+const ErrorContainer = () => (
+  <div className={isError ? "error" : "standard"}>
+    {isError ? <p>There is an error</p> : <p>Everything is sweet</p>}
+  </div>
+);
+```
