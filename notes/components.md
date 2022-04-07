@@ -2,6 +2,10 @@
 
 - [Children Prop](#Children-Prop)
 - [Conditional Rendering with if](#Conditional-Rendering-with-if)
+- [Conditional Rendering with Ternary](#Conditional-Rendering-with-Ternary)
+- [&& Operator](#&&-Operator)
+- [Rendering JSX from an Array](#Rendering-JSX-from-an-Array)
+- [Mapping an Object to view](#Mapping-an-Object-to-view)
 
 ---
 
@@ -37,6 +41,8 @@ const PageComponent = () => (
   </Section>
 );
 ```
+
+---
 
 ### Conditional Rendering with if
 
@@ -135,4 +141,99 @@ const App = () => {
   );
 };
 export default App;
+```
+
+---
+
+### Conditional Rendering with Ternary
+
+For simple conditionals it is nice to use the ternary as it provide single line concise logic
+
+```js
+<main>
+  <h1>Main Heading</h1>
+  <button type="button" onClick={onClickHandler} aria-pressed={isOn}>
+    On/Off
+  </button>
+  {isOn ? <OnMessage /> : <OffMessage />}
+</main>
+```
+
+---
+
+### && Operator
+
+The below example uses the `&&` operator to add or remove the `ErrorMessage` component to and from the dom.
+
+```js
+const App = () => {
+  const [showError, setShowError] = useState(false);
+
+  const onClickHandler = () => {
+    setShowError((value) => !value);
+  };
+
+  const ErrorMessage = () => <span>Something broke</span>;
+
+  return (
+    <main>
+      <h1>Main Heading</h1>
+      <button type="button" onClick={onClickHandler} aria-pressed={showError}>
+        Toggle Error
+      </button>
+      {showError && <ErrorMessage />}
+    </main>
+  );
+};
+```
+
+Or we can do the conditional check within the child component by passing in the boolean:
+
+```js
+ const ErrorMessage = ({showError}) => showError ? <span>Something broke</span> : null;
+
+  return (
+    <main>
+      <h1>Main Heading</h1>
+      <button type="button" onClick={onClickHandler} aria-pressed={showError}>
+        Toggle Error
+      </button>
+      <ErrorMessage showError={showError} />
+    </main>
+  );
+};
+```
+
+---
+
+### Rendering JSX from an Array
+
+1. Each rendered item requires a unique `key` that is a `string`
+2. It is better to use a property on each item for the key rather than the `index`
+3. We can use `Fragment` as the root element for each item and also add the `key` to the `Fragment`
+4. However the `key`cannot be used on the shorthand `Fragment` > `<>`
+
+---
+
+### Mapping an Object to view
+
+If we are working with an object that we want to loop through and render to the dom we can use the below pattern.
+
+1. Grab the keys within an array using `Object.keys()`
+2. Map through the array using the `key` on the source object to grab the value of each item
+3. Use each items `object key` as the `unique key`
+
+```js
+const UltimateList = () => {
+  return (
+    <section>
+      <h1>List From Object</h1>
+      <ol>
+        {Object.keys(sourceObj).map((key) => (
+          <li key="key">{sourceObj[key]}</li>
+        ))}
+      </ol>
+    </section>
+  );
+};
 ```
