@@ -4,9 +4,6 @@
 - [Create view with JSX](#Create-view-with-JSX)
 - [HTML and JSX differences](#HTML-and-JSX-differences)
 - [Accessibility and ARIA in JSX](#Accessibility-and-ARIA-in-JSX)
-- []()
-- []()
-- []()
 
 ---
 

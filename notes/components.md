@@ -8,7 +8,8 @@
 - [Mapping an Object to view](#Mapping-an-Object-to-view)
 - [Handling Side Effects (useEffect)](#Handling-Side-Effects)
 - [Shallow Dependency Checks (useEffect)](#Shallow-Dependency-Checks)
-- [Cleaning Up After Side Effects](#Cleaning-Up-After-Side-Effects)
+- [Cleaning Up After Side Effects (useEffect)](#Cleaning-Up-After-Side-Effects)
+- [useState and Closure](#useState-and-Closure)
 
 ---
 
@@ -296,3 +297,59 @@ To ensure we are mutating and creating a new complex type we should assign them 
 
 - If a side effect / function does not use anything inside the component scope we can move it outside the component
 - Function const's defined outside the component scope do not need to be added to the `useEffect` dependency array
+- The `useEffect` return a function runs only when the component is unmounted, This can be use to run any clean up code
+
+The below example shows `useEffect` with **no dependencies** but an empty array. `useEffect` runs once on initial load invoking `subscribe`. However the `return` function is not invoked until the component unmounts at which point `unsubscribe` is invoked.
+
+```js
+useEffect(() => {
+  // runs once on initial load
+  subscribe();
+
+  return () => {
+    // runs once on component unmount
+    unsubscribe(); // clean up function
+  };
+}, []);
+```
+
+The behaviour is slightly different when there are dependencies:
+
+```js
+useEffect(() => {
+  // runs on initial load and then on each change passing in the new current value
+  subscribe(counter); // new counter value
+
+  return () => {
+    // runs on each change and accepts the previous value, also runs on component unmount
+    unsubscribe(counter); // old counter value
+  };
+}, [counter]);
+```
+
+---
+
+### useState and Closure
+
+When working with state within `useEffect` we can ensure we are working with the current state by using the `useState` passed in callback.
+The current value of the state is automatically passed in as the argument to the callback > `setTime(t => t + 1)`. This way we do not need to add `time` to the `useEffect` dependencies:
+
+```js
+const [time, setTime] = useState(0);
+const [activeCounter, setActiveCounter] = useState(true);
+
+useEffect(() => {
+  let interval;
+
+  if (activeCounter) {
+    interval = setInterval(() => {
+      setTime((t) => t + 1);
+    }, 1000);
+  }
+
+  return () => {
+    // runs on each change and accepts the previous value, also runs on component unmount
+    clearInterval(interval); // old counter value
+  };
+}, [activeCounter]);
+```
