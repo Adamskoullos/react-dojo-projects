@@ -6,6 +6,9 @@
 - [&& Operator](#&&-Operator)
 - [Rendering JSX from an Array](#Rendering-JSX-from-an-Array)
 - [Mapping an Object to view](#Mapping-an-Object-to-view)
+- [Handling Side Effects (useEffect)](#Handling-Side-Effects)
+- [Shallow Dependency Checks (useEffect)](#Shallow-Dependency-Checks)
+- [Cleaning Up After Side Effects](#Cleaning-Up-After-Side-Effects)
 
 ---
 
@@ -237,3 +240,59 @@ const UltimateList = () => {
   );
 };
 ```
+
+---
+
+### Handling Side Effects
+
+The main **Side effect** to manage is not just Re-running all component code on every re-render.
+The other main concern is managing how and what the component code effects outside of the component.
+
+> Each time component data changes the component function is called re-rendering to the DOM
+
+- We may not want to run all the components code every time the component function is called
+- We want to update the view as fast as possible
+
+**useEffect** is called asynchronously every time the component is re-rendered and runs the callback after the component is rendered
+
+1. `useEffect` with no second argument array runs the callback every time the component is rendered
+
+```js
+useEffect(() => {
+  // code
+});
+```
+
+2. An empty array runs the `useEffect` callback on initial component load only and not on each re-render
+
+```js
+useEffect(() => {
+  // code
+}, []);
+```
+
+3. An array with data dependencies runs the `useEffect` callback on initial load and thereafter only if any of its dependencies have been changed
+
+```js
+useEffect(() => {
+  // code
+}, [dataOne, dataTwo]);
+```
+
+---
+
+### Shallow Dependency Checks
+
+When using dependencies within `useEffect` we need to be aware of what we are actually tracking:
+
+- **Base Types**: (Numbers, Strings, Booleans) > `compared/checked by value`
+- **Complex Types**: (Functions, Objects, Arrays) > `compared/checked by reference`
+
+To ensure we are mutating and creating a new complex type we should assign them to `useState`and use the state in `useEffect`
+
+---
+
+### Cleaning Up After Side Effects
+
+- If a side effect / function does not use anything inside the component scope we can move it outside the component
+- Function const's defined outside the component scope do not need to be added to the `useEffect` dependency array
