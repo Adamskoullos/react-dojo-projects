@@ -493,3 +493,27 @@ const initialState = {
 ---
 
 ### Loading data into a form
+
+Assuming the parent is passing down the data to the child or the child is loading data from the store:
+
+1. Create component initial/default state
+2. Pass the data down and on change re-populate the form with updated data using the `useEffect` hook and `setFormState`
+
+```js
+const initialState = {
+  firstName: "",
+  lastName: "",
+  biography: "",
+  transport: "",
+  hasReadConditions: false,
+};
+
+// Child component with data being passed down
+const Form = ({ onSubmit, data }) => {
+  const [formState, setFormState] = useState(initialState);
+
+  useEffect(() => {
+    setFormState(data);
+  },[data]);
+  // rest of code omitted
+```
