@@ -10,6 +10,7 @@
 - [Shallow Dependency Checks (useEffect)](#Shallow-Dependency-Checks)
 - [Cleaning Up After Side Effects (useEffect)](#Cleaning-Up-After-Side-Effects)
 - [useState and Closure](#useState-and-Closure)
+- [Accessibility](#Accessibility)
 
 ---
 
@@ -331,6 +332,8 @@ useEffect(() => {
 
 ### useState and Closure
 
+> **Golden Rule**: when updating state with the `setState` function pass in a `new` object/array by spreading in > setState({...obj})
+
 When working with state within `useEffect` we can ensure we are working with the current state by using the `useState` passed in callback.
 The current value of the state is automatically passed in as the argument to the callback > `setTime(t => t + 1)`. This way we do not need to add `time` to the `useEffect` dependencies:
 
@@ -352,4 +355,26 @@ useEffect(() => {
     clearInterval(interval); // old counter value
   };
 }, [activeCounter]);
+```
+
+---
+
+### Accessibility
+
+Screen readers can update the user if a new list item is added. The below snippet comes from a parent component where a list has just been added to.
+
+```js
+const [liveText, setLiveText] = useState("");
+
+// run within the update list function
+setLiveText(`${entry.title} successfully updated.`);
+
+//within the component function JSX
+<div
+  className="visually-hidden"
+  aria-live="polite"
+  aria-atomic="true" // reads the whole text not just the changes
+>
+  {liveText}
+</div>;
 ```

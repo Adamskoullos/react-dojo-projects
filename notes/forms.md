@@ -86,7 +86,7 @@ const Form = () => {
 3. Within the `onSubmitHandler` function prevent the default
 
 ```js
-const Form = () => {
+const Form = ({ onSubmit }) => {
   const [formState, setFormState] = useState({
     firstName: "",
     lastName: "",
@@ -101,7 +101,15 @@ const Form = () => {
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
-    // code to submit for data
+
+    if (!formState.firstName || formState.lastName) {
+      // code
+      return;
+    }
+    // function passed down to add data to list
+    onSubmit({ ...formSate });
+    // Reset form
+    setFormState(initialState);
   };
 
   return (
@@ -124,6 +132,23 @@ const Form = () => {
     </form>
   );
 };
+```
+
+Parent component:
+
+Below is a snippet of the parent component to show the data flow of the new form data using the passed down `onSubmit` function
+
+```js
+const Container = () => {
+  const [data, setData] = useState([]);
+
+  const onSubmitHandler = (newItem) => {
+    setData([...data, newItem]);
+  };
+};
+
+//Then within the return JSX
+<Form onSubmit={onSubmitHandler} />;
 ```
 
 ---
