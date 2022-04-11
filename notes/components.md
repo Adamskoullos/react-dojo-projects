@@ -11,6 +11,7 @@
 - [Cleaning Up After Side Effects (useEffect)](#Cleaning-Up-After-Side-Effects)
 - [useState and Closure](#useState-and-Closure)
 - [Accessibility](#Accessibility)
+- [Avoiding State Changes on Unmounted Components](#Avoiding-State-Changes-on-Unmounted-Components)
 
 ---
 
@@ -247,6 +248,8 @@ const UltimateList = () => {
 
 ### Handling Side Effects
 
+> `Functions` and `properties` defined `inside useEffect` or `outside the component` do not need to be added to the `dependency array`.
+
 The main **Side effect** to manage is not just Re-running all component code on every re-render.
 The other main concern is managing how and what the component code effects outside of the component.
 
@@ -377,4 +380,42 @@ setLiveText(`${entry.title} successfully updated.`);
 >
   {liveText}
 </div>;
+```
+
+---
+
+### Avoiding State Changes on Unmounted Components
+
+If a call for data has been made and the user moves to another page before the data comes back and is rendered we want to put some logic in place to prevent the data from being added to an unmounted component. To do this we can add an `isMounted` const.
+
+1. Create a `useRef` for the prop `isMounted` > we use this as `useRef` is available for all renders!
+2. Add `isMounted` conditional to `setState` logic within `useEffect` to prevent setting the state on an unmounted component after initial load
+3. Add the `isMounted` conditional to all update logic to prevent the component from having its state updated if it is unmounted
+
+```js
+// Within component
+const isMounted = useRef(true);
+
+useEffect(() => {
+  // Initial load
+  const getData = async (url) => {
+    const { data } = await axios.get(url);
+    if (isMounted.current && data) {
+      setSomeData(data);
+    }
+  };
+  getData("/api/some-endpoint");
+  // On unmount
+  return () => {
+    isMounted.current = false;
+  };
+}, []);
+
+// Update data
+const onSubmitHandler = async (newItem) => {
+  const { data } = await axios.post("/api/endpoint", newItem);
+  if (isMounted.current && data) {
+    setSomeData([...someData, data]);
+  }
+};
 ```
