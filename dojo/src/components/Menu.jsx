@@ -34,7 +34,11 @@ const Menu = () => {
         </title>
       </Helmet>
       <h2 className="main-heading">Rock you taste buds with one of these!</h2>
-      <Loader isLoading={isLoading} loadingMessage="Loading ice creams..." />
+      <Loader
+        isLoading={isLoading}
+        loadingMessage="Loading ice creams..."
+        doneMessage="Ice creams loaded"
+      />
       {menu && (
         <ul className="container">
           {menu.map((item) => (

@@ -362,28 +362,6 @@ useEffect(() => {
 
 ---
 
-### Accessibility
-
-Screen readers can update the user if a new list item is added. The below snippet comes from a parent component where a list has just been added to.
-
-```js
-const [liveText, setLiveText] = useState("");
-
-// run within the update list function
-setLiveText(`${entry.title} successfully updated.`);
-
-//within the component function JSX
-<div
-  className="visually-hidden"
-  aria-live="polite"
-  aria-atomic="true" // reads the whole text not just the changes
->
-  {liveText}
-</div>;
-```
-
----
-
 ### Avoiding State Changes on Unmounted Components
 
 If a call for data has been made and the user moves to another page before the data comes back and is rendered we want to put some logic in place to prevent the data from being added to an unmounted component. To do this we can add an `isMounted` switch.
@@ -413,3 +391,118 @@ const onSubmitHandler = async (newItem) => {
   }
 };
 ```
+
+This next example shows a loader component utilizing `useEffect` and its return function to manage the user experience when data is loading.
+
+`isLoading` is a dependency and is initially true, which sets up the seTimeout to set setShowLoadingMessage to true after 400ms, however if the data is received in less than 400ms and `isLoading` becomes false, `useEffect` runs again this time skipping the if statement and running the return function which cancels the setTimeout and sets setShowLoadingMessage to false.
+
+```js
+import React, { useEffect, useState } from "react";
+
+const Loader = ({ loadingMessage, isLoading }) => {
+  const [showLoadingMessage, setShowLoadingMessage] = useState(false);
+
+  useEffect(() => {
+    let loadingMessageDelay;
+
+    if (isLoading) {
+      loadingMessageDelay = setTimeout(() => {
+        setShowLoadingMessage(true);
+      }, 4000);
+    }
+
+    return () => {
+      clearTimeout(loadingMessageDelay);
+      setShowLoadingMessage(false);
+    };
+  }, [isLoading]);
+
+  return showLoadingMessage ? (
+    <p className="loading">{loadingMessage}</p>
+  ) : null;
+};
+
+export default Loader;
+```
+
+---
+
+### Accessibility
+
+Screen readers can update the user if a new list item is added. The below snippet comes from a parent component where a list has just been added to.
+
+```js
+const [liveText, setLiveText] = useState("");
+
+// run within the update list function
+setLiveText(`${entry.title} successfully updated.`);
+
+//within the component function JSX
+<div
+  className="visually-hidden"
+  aria-live="polite"
+  aria-atomic="true" // reads the whole text not just the changes
+>
+  {liveText}
+</div>;
+```
+
+This next example builds on the loader example above and adds screen reader alerts when data is loading and also when it has loaded.
+
+The template includes an `aria-live` container set to `assertive` and `aria-atomic` is set to `true` so the full text content is read on every render.
+
+1. Initial load: `isLoading` is passed in as `true` and within `useEffect` `isLoadingPreviousValue` is set from `null` to `true`
+2. useEffect: if the data is loaded in less than 400ms:
+
+- `isLoading` becomes false running the `else if` statement
+- `setShowDoneMessage` is set to true triggering the screen reader and then via the setTimeout, turned off again after 300ms
+- useEffect clean up function is run
+
+3. If after 400ms the data is still loading the `setShowLoadingMessage` is set to true triggering the screen reader
+4. When the data is finally received `isLoading` becomes false and triggers `useEffect` to run again setting the done message to true and triggering the screen reader. The cleanup function also runs resetting state and clearing setTimeouts.
+
+```js
+import React, { useEffect, useState, useRef } from "react";
+
+const Loader = ({ loadingMessage, isLoading, doneMessage }) => {
+  const [showLoadingMessage, setShowLoadingMessage] = useState(false);
+  const [showDoneMessage, setShowDoneMessage] = useState(false);
+  const isLoadingPreviousValue = useRef(null);
+
+  useEffect(() => {
+    let loadingMessageDelay;
+    let doneMessageDelay;
+
+    if (isLoading) {
+      loadingMessageDelay = setTimeout(() => {
+        setShowLoadingMessage(true);
+      }, 4000);
+    } else if (isLoadingPreviousValue.current) {
+      setShowDoneMessage(true);
+      doneMessageDelay = setTimeout(() => {
+        setShowDoneMessage(false);
+      }, 300);
+    }
+
+    isLoadingPreviousValue.current = isLoading;
+
+    return () => {
+      clearTimeout(loadingMessageDelay);
+      clearTimeout(doneMessageDelay);
+      setShowLoadingMessage(false);
+      setShowDoneMessage(false);
+    };
+  }, [isLoading]);
+
+  return (
+    <div aria-live="assertive" aria-atomic="true">
+      {showLoadingMessage && <p className="loading">{loadingMessage}</p>}
+      {showDoneMessage && <p className="visually-hidden">{doneMessage}</p>}
+    </div>
+  );
+};
+
+export default Loader;
+```
+
+---
