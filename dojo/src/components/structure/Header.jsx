@@ -1,4 +1,5 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 
 const Header = ({ headerText, image, altText }) => {
   return (
@@ -7,6 +8,14 @@ const Header = ({ headerText, image, altText }) => {
         <img src={image} alt={altText} />
         {headerText}
       </h1>
+      <nav>
+        <NavLink
+          to="/"
+          className={({ isActive }) => (isActive ? "active" : undefined)}
+        >
+          Menu
+        </NavLink>
+      </nav>
     </header>
   );
 };

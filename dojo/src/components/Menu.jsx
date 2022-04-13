@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { getMenu } from "../data/iceCreamData";
 import IceCreamImage from "./IceCreamImage";
@@ -7,6 +8,7 @@ import Loader from "../components/structure/Loader";
 const Menu = () => {
   const [menu, setMenu] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let isMounted = true;
@@ -27,7 +29,7 @@ const Menu = () => {
   }, []);
 
   return (
-    <main>
+    <Fragment>
       <Helmet>
         <title>
           Rock you taste buds with one of these! | Ultimate Ice Cream
@@ -43,12 +45,17 @@ const Menu = () => {
         <ul className="container">
           {menu.map((item) => (
             <li key={item.id}>
-              <section className="card">
+              <section
+                onClick={() => navigate(`/edit/${item.id}`, { state: item })}
+                className="card"
+              >
                 <div className="image-container">
                   <IceCreamImage id={item.id} />
                 </div>
                 <div className="text-container">
-                  <h3>{item.iceCream.name}</h3>
+                  <h3>
+                    <Link to={`/edit/${item.id}`}>{item.iceCream.name}</Link>
+                  </h3>
                   <div className="content card-content">
                     <p className="price">{`${item.price.toFixed(2)}`}</p>
                     <p className={`stock${item.inStock ? "" : " out"}`}>
@@ -64,7 +71,7 @@ const Menu = () => {
           ))}
         </ul>
       )}
-    </main>
+    </Fragment>
   );
 };
 

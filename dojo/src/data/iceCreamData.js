@@ -10,10 +10,30 @@ export const getMenu = async () => {
 
         return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
       });
-      console.log("Data: ", sortedData);
       return sortedData;
     }
   } catch (err) {
     console.log(err.message);
+  }
+};
+
+export const getIceCream = async (id) => {
+  let res;
+  try {
+    res = await axios.get(`/api/menu/${id}`);
+  } catch (err) {
+    throw err;
+  }
+  if (res.data) {
+    return res.data;
+  }
+};
+
+export const updateIceCream = async (data) => {
+  try {
+    const res = await axios.put(`/api/menu/${data.id}`, data);
+    return res;
+  } catch (err) {
+    throw err;
   }
 };
