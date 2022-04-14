@@ -1,19 +1,35 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
-import { getIceCream, updateIceCream } from "../data/iceCreamData";
-import Loader from "../components/structure/Loader";
+import {
+  getIceCream,
+  updateIceCream,
+  deleteIceCream,
+  getAvailableIceCream,
+  addNewIceCream,
+} from "../data/iceCreamData";
+// import Loader from "../components/structure/Loader";
+import Main from "./structure/Main";
 import IceCreamImage from "./IceCreamImage";
 import "../styles/form-spacer.scss";
 
-const EditIceCream = () => {
-  const [iceCream, setIceCream] = useState({
-    price: "0.00",
-    inStock: true,
-    quantity: "0",
-    description: "",
-    iceCream: {},
-  });
+const EditIceCream = ({ newIceCream }) => {
+  const [iceCream, setIceCream] = useState(
+    !newIceCream
+      ? {
+          price: "0.00",
+          inStock: true,
+          quantity: "0",
+          description: "",
+          iceCream: {},
+        }
+      : {
+          price: "",
+          inStock: false,
+          quantity: "",
+          description: "",
+          iceCream: {},
+        }
+  );
   const [isLoading, setIsLoading] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -22,24 +38,39 @@ const EditIceCream = () => {
     setIsLoading(true);
     const getData = async () => {
       try {
-        const data = await getIceCream(id);
-        if (data) {
-          setIceCream({
-            id: data.id,
-            price: data.price.toFixed(2),
-            inStock: data.inStock,
-            quantity: data.quantity.toString(),
-            description: data.description,
-            iceCream: data.iceCream,
-          });
-          setIsLoading(false);
+        if (!newIceCream) {
+          const data = await getIceCream(id);
+          if (data) {
+            setIceCream({
+              id: data.id,
+              price: data.price.toFixed(2),
+              inStock: data.inStock,
+              quantity: data.quantity.toString(),
+              description: data.description,
+              iceCream: data.iceCream,
+            });
+          }
+        } else if (newIceCream) {
+          const data = await getAvailableIceCream(id);
+          if (data) {
+            setIceCream({
+              id: data.id,
+              price: "",
+              inStock: false,
+              quantity: "",
+              description: "",
+              iceCream: { id: data.id, name: data.name },
+            });
+          }
         }
+        setIsLoading(false);
       } catch (err) {
         if (err.response.status === 404) {
           navigate("/");
         }
       }
     };
+
     getData();
   }, [id]);
 
@@ -64,7 +95,6 @@ const EditIceCream = () => {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-
     const newItem = {
       id: iceCream.id,
       iceCream: iceCream.iceCream,
@@ -73,26 +103,29 @@ const EditIceCream = () => {
       quantity: parseInt(iceCream.quantity),
       description: iceCream.description,
     };
-    const res = await updateIceCream(newItem);
+    if (!newIceCream) {
+      const res = await updateIceCream(newItem);
+    } else {
+      const res = await addNewIceCream(newItem);
+    }
+
     navigate("/");
   };
 
+  const onDeleteHandler = async () => {
+    try {
+      await deleteIceCream(id);
+      navigate("/");
+    } catch (err) {}
+  };
+
   return (
-    <Fragment>
-      <Helmet>
-        {"name" in iceCream.iceCream && (
-          <title>{iceCream.iceCream.name} | Ultimate Ice Cream</title>
-        )}
-      </Helmet>
-      {"name" in iceCream.iceCream && (
-        <h1 className="main-heading">Update This Beauty</h1>
-      )}
-      <Loader
+    <Main headingText={iceCream.iceCream?.name || "Update This Beast!"}>
+      {/* <Loader
         isLoading={isLoading}
         loadingMessage="Loading ice cream..."
         doneMessage="Ice cream loaded"
-      />
-
+      /> */}
       <div className="form-frame">
         <div className="image-container">
           <IceCreamImage id={iceCream.id} />
@@ -147,11 +180,20 @@ const EditIceCream = () => {
               <button type="submit" className="ok">
                 Save
               </button>
+              {!newIceCream && (
+                <button
+                  type="button"
+                  className="warning"
+                  onClick={onDeleteHandler}
+                >
+                  Delete
+                </button>
+              )}
             </div>
           </form>
         </div>
       </div>
-    </Fragment>
+    </Main>
   );
 };
 

@@ -15,6 +15,12 @@ const Header = ({ headerText, image, altText }) => {
         >
           Menu
         </NavLink>
+        <NavLink
+          to="/ice-creams"
+          className={({ isActive }) => (isActive ? "active" : undefined)}
+        >
+          Add Ice Creams
+        </NavLink>
       </nav>
     </header>
   );

@@ -3,8 +3,9 @@ import { HelmetProvider } from "react-helmet-async";
 import "./styles/ice-cream.scss";
 import Header from "./components/structure/Header";
 import Footer from "./components/structure/Footer";
-import Menu from "./components/Menu";
-import EditIceCream from "./components/EditIceCream";
+import Menu from "./pages/Menu";
+import IceCreamForm from "./components/IceCreamForm";
+import AvailableIceCreams from "./pages/AvailableIceCreams";
 import iceCreamImg from "./assets/img/ultimate-ice-cream.svg";
 import {
   BrowserRouter as Router,
@@ -23,13 +24,13 @@ const App = () => {
             image={iceCreamImg}
             altText="header image of ice cream"
           />
-          <main>
-            <Routes>
-              <Route path="/" element={<Menu />} />
-              <Route path="/edit/:id" element={<EditIceCream />} />
-              <Route path="/*" element={<Navigate replace to="/" />} />
-            </Routes>
-          </main>
+          <Routes>
+            <Route path="/" element={<Menu />} />
+            <Route path="/ice-creams" element={<AvailableIceCreams />} />
+            <Route path="/edit/:id" element={<IceCreamForm />} />
+            <Route path="/add/:id" element={<IceCreamForm newIceCream />} />
+            <Route path="/*" element={<Navigate replace to="/" />} />
+          </Routes>
           <Footer footerText="ULTIMATE ICE CREAM" />
         </Router>
       </Fragment>
