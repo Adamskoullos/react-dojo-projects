@@ -3,6 +3,7 @@
 - [Encapsulating State Logic](#Encapsulating-State-Logic)
 - [Building a network request hook](#Building-a-network-request-hook)
 - [Creating a usePersistStorage hook](#Creating-a-usePersistStorage-hook)
+- [useScrollToBottom](#useScrollToBottom)
 
 ---
 
@@ -113,4 +114,31 @@ import { useStorage } from "./useStorage";
 
 // within component function
 const [user, setUser] = useStorage("user", user);
+```
+
+### useScrollToBottom
+
+```js
+import { useEffect, useRef } from "react";
+
+export const useScrollToBottom = (messages) => {
+  let scrollContainer = useRef();
+
+  useEffect(() => {
+    if (!scrollContainer?.current) return;
+
+    scrollContainer.current.scrollTo(0, scrollContainer.current.scrollHeight);
+  }, [messages]);
+
+  return scrollContainer;
+};
+```
+
+Within component function:
+
+```js
+const scrollRef = useScrollToBottom(messages);
+
+// within jsx
+<div style={styles.container} ref={(ref) => (scrollRef.current = ref)}>
 ```

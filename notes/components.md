@@ -284,6 +284,25 @@ useEffect(() => {
 }, [dataOne, dataTwo]);
 ```
 
+**Objects as dependencies in useEffect**
+
+> It is best practice to only use primitive data types where possible within `useEffect`
+
+When we are working with objects inside the useEffect we can quickly get into an infinite render cycle. To prevent this use the following pattern:
+
+`useMemo` only re-runs the callback thus creating a new object if items in the dependency array changes, so we first create an object with `useMemo` and then use this when we are passing down or directly using object properties within `useEffect`
+
+```js
+// inside component hook/component function
+let options = useMemo(
+  () => ({
+    one: "one",
+    two: "two",
+  }),
+  []
+);
+```
+
 ---
 
 ### Shallow Dependency Checks
