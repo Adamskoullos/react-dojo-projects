@@ -40,9 +40,9 @@ Building on from the `people` state above we can pass props down as normal:
 ```
 
 However we need to handle them in the child component.
-Below We could import the `IPerson` interface (here I have just copied and pasted it) and then use it within a component specific `IProps` interface.
+The `IPerson` interface is imported and used within `IProps`.
 
-Then we have two options to tell our component we are using `IPerson`:
+We have two options to tell our component that props is of type `IProps`:
 
 Method 1:
 
@@ -152,7 +152,7 @@ Then in the `List` component we import the `IPerson` interface and use it in `IP
 
 The `renderList` function argument is of type `IPerson[]` and returns `JSX.Element[]`
 
-And the `List` component is of type `React.FC` and has props passed in if type `<IProps>` > `React.FC<IProps>`
+And the `List` component is of type `React.FC` and has props passed in of type `<IProps>` > `React.FC<IProps>`
 
 ```tsx
 import React from "react";
