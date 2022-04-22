@@ -2,6 +2,8 @@
 
 **1. Create the context and Reducer**
 
+`/context/AppContext.tsx`
+
 ```tsx
 import React, { createContext, useReducer } from "react";
 
