@@ -62,11 +62,13 @@ function useFetch<Payload>(url: string): {
 Then within the component we import and use the the custom hook we also either create or import an interface and then pass the interface in to replace the generic when we call the custom hook:
 
 ```tsx
+interface IProduct{
+    name: string;
+    type: string;
+}
+
 function SomeComponent(){
-    interface IProduct{
-        name: string;
-        type: string;
-    }
+
     const { data, done } = useFetch<IProduct[]>('some-url');
     const snowboards = useMemo(() => {
         return data?.filter((product) => product.type === 'snowboards');
