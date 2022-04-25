@@ -78,7 +78,7 @@ Then within the slice we can create the `extraReducers` builder function and add
 
 The returned value from the `createAsyncThunk` request is piped through as the `action.payload`.
 
-**Note**: When using `TypeScript` we need to use the builder function. If typing is properly done in the Thunk
+**Note**: When using `TypeScript` we need to use the builder function.
 
 ```tsx
 export const reservationsSlice = createSlice({
