@@ -2,6 +2,7 @@
 // import React, { useContext, useState } from "react";
 import styled from "@emotion/styled/macro";
 import { css, Global, keyframes } from "@emotion/react/macro";
+import { ReactNode } from "react";
 
 const H1 = styled.h1`
   margin: auto;
